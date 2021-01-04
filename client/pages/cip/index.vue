@@ -25,9 +25,9 @@
         </div>
       </v-flex>
       <v-flex xs12 mt-3>
-        <tabla-cips/>
       </v-flex>
     </v-layout>
+    <tabla-cips/>
   </div>
 </template>
 

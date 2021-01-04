@@ -32,21 +32,25 @@
       >
         <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
         <template slot="items" slot-scope="props">
+          
           <tr
             @click="props.expanded = !props.expanded"
             class="text-xs-left"
             style="cursor: pointer;"
           >
             <td>
-              <strong class="blue-grey--text">{{ props.item.descripcion }}</strong>
+              <strong> {{props.item.circuito}} </strong>
             </td>
-            <td>{{ props.item.inicio | formatearFecha }}</td>
-            <td>{{ props.item.fin | formatearFecha }}</td>
+            <td><!-- {{ props.item.inicio | formatearFecha }} --> {{props.item.fecha}}</td>
+            <td>{{props.item.tiempo}}</td>
             <td>
-              <strong>{{ props.item.duracion / 60 | redondear }}</strong> min
+              <strong>{{props.item.litros_drenaje}}</strong>
             </td>
-            <td>{{ props.item.vol_env }}</td>
-            <td>{{ props.item.vol_sani }}</td>
+            <td><v-text-field v-model="props.item.targe_litros" type="number" class="body-1"  flat solo hide-details placeholder="Indicar litros"></v-text-field></td>
+            <!-- <td>targe/litros = targe/litros  - litros/drenaje el resultado</td> -->
+            <td><v-text-field flat solo hide-details readonly class="body-1 red--text" style="color: #000 !important;" :value="props.item.targe_litros ? props.item.desvio = props.item.targe_litros - props.item.litros_drenaje : 'Esperando valor de target'" ></v-text-field></td>
+            <td>{{ props.item.tipo_limpieza }}</td>
+            <td>{{ props.item.c_final}}</td>
           </tr>
         </template>
         <template slot="expand" slot-scope="props">
@@ -92,7 +96,7 @@ export default {
       { text: 'Tiempo', value: 'Inicio' },
       { text: 'Litros/Drenaje', value: 'Fin' },
       { text: 'Targe Litros', value: 'Duracion' },
-      { text: 'Desvio', value: 'vol_env' },
+      { text: 'Desvio', value: 'desvio' },
       { text: 'Tipo de Limpieza', value: 'vol_sani' },
       { text: 'Cond. Final', value: 'vol_env' },
     ],
@@ -135,7 +139,36 @@ export default {
       }
     ],
     loading: false,
-    cips: [],
+    cips: [{
+        circuito:"1",
+        fecha:"11-23-2002",
+        tiempo:"11",
+        litros_drenaje:10,
+        targe_litros:null,
+        desvio:null,
+        tipo_limpieza:"Profunda",
+        c_final:"Optima"
+    },
+    {
+        circuito:"2",
+        fecha:"11-23-2023",
+        tiempo:"17",
+        litros_drenaje:25,
+        targe_litros:null,
+        desvio:null,
+        tipo_limpieza:"Superficial",
+        c_final:"Regular"
+    },
+    {
+        circuito:"3",
+        fecha:"11-30-2023",
+        tiempo:"15",
+        litros_drenaje:60,
+        targe_litros:null,
+        desvio:null,
+        tipo_limpieza:"Superficial",
+        c_final:"Regular"
+    }],
     equipos: [],
     cipSeleccionado: ['CIP11']
   }),
@@ -153,6 +186,11 @@ export default {
   },
 
   methods: {
+    calcularDesvio(){
+      let desvio=0
+     desvio = this.cipsItem.litros_drenaje - this.cipsItem.targe_litros
+     return desvio
+    },
     ...mapMutations(['SET_APLICAR_FILTRO']),
     async getAlarmas() {
       this.loading = true
@@ -202,3 +240,13 @@ export default {
   }
 }
 </script>
+
+
+<style>
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+input[type=number] { -moz-appearance:textfield; }
+</style>  
